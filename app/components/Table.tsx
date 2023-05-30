@@ -7,7 +7,6 @@ interface TableProps {
 interface TableRow {
   rating: number;
   player: string;
-  class: string;
   faction: string;
   realm: string;
   wins: number;
