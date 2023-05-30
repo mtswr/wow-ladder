@@ -1,38 +1,61 @@
+import createAccessToken from './auth';
+import Image from 'next/image';
+import Table from './components/Table';
+import Link from 'next/link';
 
-async function getData() {
-  const results = await fetch('https://us.api.blizzard.com/data/wow/pvp-season/33/pvp-leaderboard/3v3?namespace=dynamic-us&locale=en_US&', {
-    headers: {
-      'Authorization': `Bearer ${process.env.BLIZZARD_API_TOKEN}`
-    }
+async function getLadderData() {
+  const auth = await createAccessToken();
+  const response = await fetch('https://us.api.blizzard.com/data/wow/pvp-season/35/pvp-leaderboard/3v3?namespace=dynamic-us&locale=en_US&access_token=' + auth.access_token, {
+    cache: 'no-store'
   });
-  return results.json();
+  const data = await response.json();
+
+  const filteredData = data.entries
+    .filter(entry => {
+      const realms = ['azralon', 'gallywix', 'goldrinn', 'nemesis', 'tol-barad'];
+      return realms.includes(entry.character.realm.slug);
+    })
+    .slice(0, 50);
+  const mappedData = filteredData.map(entry => ({
+    rating: entry.rating,
+    player: entry.character.name,
+    class: entry.character.class,
+    faction: entry.faction.type,
+    realm: entry.character.realm.slug,
+    wins: entry.season_match_statistics.won,
+    losses: entry.season_match_statistics.lost
+  }));
+
+  return mappedData;
 }
 
 export default async function Home() {
-  const data = await getData();
-  console.log(data);
-
-  if (!data || !data.results) {
-    return <div className="items-center justify-center flex min-h-screen">Data not found</div>
-  }
-
+  const data = await getLadderData();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map(entry => (
-          <li key={entry.character.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="px-6 py-4">
-              <h3 className="font-bold text-lg mb-2">{entry.character.name}</h3>
-              <p className="text-gray-700 text-base">Rank: {entry.rank}</p>
-              <p className="text-gray-700 text-base">Rating: {entry.rating}</p>
-              <p className="text-gray-700 text-base">Played: {entry.season_match_statistics.played}</p>
-              <p className="text-gray-700 text-base">Won: {entry.season_match_statistics.won}</p>
-              <p className="text-gray-700 text-base">Lost: {entry.season_match_statistics.lost}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <main className="flex min-h-screen flex-col items-center p-24 bg-gradient-to-r from-gray-800 to-gray-900">
+      <div className="flex items-center justify-center mb-8 space-x-4">
+        <Image
+          src="/wow-logo.png"
+          alt="Logo"
+          className="w-10"
+          width={64}
+          height={64}
+        />
+        <Image
+          src="/brasil-logo.png"
+          alt="Logo"
+          className="w-12"
+          width={100}
+          height={64}
+        />
+      </div>
+      <span className='text-zinc-200'>Ranking dos jogadores dos servidores do Brasil em busca da glória nas arenas 3v3.</span>
+      <span className='text-zinc-200 mb-8'>Feito com <Link href='https://nextjs.org/' className='text-zinc-100 underline'>Next.js</Link> e a 
+        <Link href='https://develop.battle.net/' className='text-zinc-100 underline'> API da Blizzard</Link>.
+      </span>
+      <div className="max-w-screen-md mx-auto">
+        <Table data={data} />
+      </div>
     </main>
   )
 }
-
