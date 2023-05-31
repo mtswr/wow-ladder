@@ -55,8 +55,7 @@ async function getLadderData(): Promise<TableRow[]> {
 export default async function Home() {
   const data = await getLadderData();
   return (
-    <div className="flex min-h-screen flex-col items-center p-24 overflow-hidden bg-gradient-to-tl from-black via-zinc-800 to-black
-    ">
+    <div className="flex min-h-screen flex-col items-center py-24 overflow-hidden bg-gradient-to-tl from-black via-zinc-800 to-black">
       <div className="flex items-center justify-center mb-8 space-x-4">
         <Image
           src="/wow-logo.png"

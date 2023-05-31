@@ -23,8 +23,8 @@ npm install
 ```
 Create a file named .env.local in the project root directory and add the following lines, replacing `<your_client_id>` and `<your_client_secret>` with your actual Blizzard API credentials:
 ```bash
-BLIZZARD_API_CLIENT_ID=<your_client_id>
-BLIZZARD_API_CLIENT_SECRET=<your_client_secret>
+CLIENT_ID=<your_client_id>
+CLIENT_SECRET=<your_client_secret>
 ```
 Start the development server:
 ```bash
