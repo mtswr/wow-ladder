@@ -55,7 +55,8 @@ async function getLadderData(): Promise<TableRow[]> {
 export default async function Home() {
   const data = await getLadderData();
   return (
-    <main className="flex min-h-screen flex-col items-center p-24 bg-gradient-to-r from-gray-800 to-gray-900">
+    <div className="flex min-h-screen flex-col items-center p-24 overflow-hidden bg-gradient-to-tl from-black via-zinc-800 to-black
+    ">
       <div className="flex items-center justify-center mb-8 space-x-4">
         <Image
           src="/wow-logo.png"
@@ -79,6 +80,6 @@ export default async function Home() {
       <div className="max-w-screen-md mx-auto">
         <Table data={data} />
       </div>
-    </main>
+    </div>
   );
 }
